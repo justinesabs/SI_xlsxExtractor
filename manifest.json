@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Excel/CSV Column Extractor",
+  "version": "1.0",
+  "description": "A Chrome extension to extract specific columns from Excel/CSV files.",
+  "permissions": ["clipboardWrite", "clipboardRead"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
