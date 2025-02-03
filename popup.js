@@ -11,10 +11,11 @@ function handleFileSelect(event) {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       const data = e.target.result;
       if (file.name.endsWith('.csv')) {
         df = parseCSV(data);
+        updatePreview(df);
       } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
         parseExcel(data).then(parsedData => {
           df = parsedData;
@@ -114,10 +115,19 @@ function extractColumns() {
     'SRP'
   ];
 
+  function generateBatchDate() {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    return `${month}${year}`;
+  }
+
   extractedDf = df.map(row => {
     const newRow = {};
     orderedColumns.forEach(col => {
-      if (col === 'SuppCode' || col === 'Batchdate') {
+      if (col === 'Batchdate') {
+        newRow[columnMapping[col]] = generateBatchDate();
+      } else if (col === 'SuppCode') {
         newRow[columnMapping[col]] = row[col] || '';
       } else {
         newRow[columnMapping[col]] = row[col];
@@ -135,7 +145,15 @@ function copyToClipboard() {
 
   if (extractedDf) {
     const headers = Object.keys(extractedDf[0]).join('\t');
-    const rows = extractedDf.map(row => Object.values(row).join('\t')).join('\n');
+    const rows = extractedDf.map(row => {
+      return Object.values(row).map(value => {
+        // Ensure Batchdate is treated as a string
+        if (typeof value === 'number' && value.toString().length === 3) {
+          return `0${value}`; // Add leading zero if necessary
+        }
+        return value;
+      }).join('\t');
+    }).join('\n');
     clipboardStr = headers + '\n' + rows;
   } else if (df) {
     const headers = Object.keys(df[0]).join('\t');
@@ -146,7 +164,6 @@ function copyToClipboard() {
     return;
   }
 
-  // Copy to clipboard
   navigator.clipboard.writeText(clipboardStr).then(() => {
     document.getElementById('statusLabel').textContent = "Content copied to clipboard successfully!";
   }).catch(err => {
