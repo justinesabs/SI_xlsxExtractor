@@ -145,20 +145,12 @@ function copyToClipboard() {
 
   if (extractedDf) {
     const headers = Object.keys(extractedDf[0]).join('\t');
-    const rows = extractedDf.map(row => {
-      return Object.values(row).map(value => {
-        // Ensure Batchdate is treated as a string
-        if (typeof value === 'number' && value.toString().length === 3) {
-          return `0${value}`; // Add leading zero if necessary
-        }
-        return value;
-      }).join('\t');
-    }).join('\n');
-    clipboardStr = headers + '\n' + rows;
+    const rows = extractedDf.map(row => Object.values(row).join('\t')).join('\n');
+    clipboardStr = rows;
   } else if (df) {
     const headers = Object.keys(df[0]).join('\t');
     const rows = df.map(row => Object.values(row).join('\t')).join('\n');
-    clipboardStr = headers + '\n' + rows;
+    clipboardStr = rows;
   } else {
     alert("No data to copy. Please load a file first.");
     return;
