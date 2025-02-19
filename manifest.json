@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Excel/CSV Column Extractor",
+  "name": "Sales Invoice Excel/CSV Column Extractor",
   "version": "1.0",
   "description": "A Chrome extension to extract specific columns from Excel/CSV files.",
   "permissions": ["clipboardWrite", "clipboardRead"],
